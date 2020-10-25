@@ -79,19 +79,19 @@ public class PokemonServiceImpl implements PokemonService {
   @Override
   public List<PokemonBase> getHeaviestPokemons(int top) {
     Pageable topLimit = PageRequest.of(0, top);
-    return pokemonMapper.mapDAO(pokemonBaseRepository.findOrderByWeight(topLimit));
+    return pokemonMapper.mapDAO(pokemonBaseRepository.findByColorRedOrderByWeight(topLimit));
 
   }
 
   @Override
   public List<PokemonBase> getHighestPokemons(int top) {
     Pageable topLimit = PageRequest.of(0, top);
-    return pokemonMapper.mapDAO(pokemonBaseRepository.findOrderByHeight(topLimit));
+    return pokemonMapper.mapDAO(pokemonBaseRepository.findByColorRedOrderByHeight(topLimit));
   }
 
   @Override
   public List<PokemonBase> getMoreBaseExperiencePokemons(int top) {
     Pageable topLimit = PageRequest.of(0, top);
-    return pokemonMapper.mapDAO(pokemonBaseRepository.findOrderByBase_experience(topLimit));
+    return pokemonMapper.mapDAO(pokemonBaseRepository.findByColorRedOrderByBase_experience(topLimit));
   }
 }
