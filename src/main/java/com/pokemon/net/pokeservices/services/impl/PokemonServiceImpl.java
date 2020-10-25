@@ -7,6 +7,7 @@ import com.pokemon.net.pokeservices.domain.PokemonConfig;
 import com.pokemon.net.pokeservices.domain.PokemonData;
 import com.pokemon.net.pokeservices.repository.PokemonBaseRepository;
 import com.pokemon.net.pokeservices.repository.PokemonDataRepository;
+import com.pokemon.net.pokeservices.repository.mapper.PokemonMapper;
 import com.pokemon.net.pokeservices.services.PokemonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class PokemonServiceImpl implements PokemonService {
   @Value("${pokemon.url}")
   private String uri;
 
+  PokemonMapper pokemonMapper = PokemonMapper.INSTANCE;
 
   @Override
   public PokemonConfig getAndSavePokemons() {
@@ -52,31 +54,29 @@ public class PokemonServiceImpl implements PokemonService {
     for (PokemonBase poke : pokemonConfig.getResults()) {
       PokemonData pokeData = restTemplate.getForObject(poke.getUrl(), PokemonData.class);
 
-      //if (pokeData.hasRedColor()) {
-      pokemonDataRepository.save(pokeData);
-      //}
+      pokemonDataRepository.save(pokemonMapper.map(pokeData));
       poke.setId(pokeData.getId());
     }
-    pokemonBaseRepository.saveAll(pokemonConfig.getResults());
+    pokemonBaseRepository.saveAll(pokemonMapper.map(pokemonConfig.getResults()));
     return pokemonConfig;
   }
 
   @Override
-  public List<PokemonData> getHeaviestPokemons(int top) {
+  public List<PokemonBase> getHeaviestPokemons(int top) {
     Pageable topLimit = PageRequest.of(0, top);
-    return pokemonDataRepository.findOrderByHeight(topLimit);
+    return pokemonMapper.mapDAO(pokemonBaseRepository.findOrderByWeight(topLimit));
 
   }
 
   @Override
-  public List<PokemonData> getHighestPokemons(int top) {
+  public List<PokemonBase> getHighestPokemons(int top) {
     Pageable topLimit = PageRequest.of(0, top);
-    return pokemonDataRepository.findOrderByHeight(topLimit);
+    return pokemonMapper.mapDAO(pokemonBaseRepository.findOrderByHeight(topLimit));
   }
 
   @Override
-  public List<PokemonData> getMoreBaseExperiencePokemons(int top) {
+  public List<PokemonBase> getMoreBaseExperiencePokemons(int top) {
     Pageable topLimit = PageRequest.of(0, top);
-    return pokemonDataRepository.findOrderByBase_experience(topLimit);
+    return pokemonMapper.mapDAO(pokemonBaseRepository.findOrderByBase_experience(topLimit));
   }
 }

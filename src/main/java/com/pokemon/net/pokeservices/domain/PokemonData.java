@@ -1,14 +1,11 @@
 package com.pokemon.net.pokeservices.domain;
 
 import lombok.Data;
-import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.List;
 
 @Data
-@Entity
 public class PokemonData {
 
   @Id
@@ -16,17 +13,17 @@ public class PokemonData {
   int height;
   int weight;
   int base_experience;
-  /*
-  transient List<PokemonResources.ColorVersion> game_indices;
+  List<ColorVersion> game_indices;
 
-  public boolean hasRedColor() {
-    for (PokemonResources.ColorVersion color : game_indices) {
-      if (color.getVersion().getName().equals("red")) {
-        return true;
-      }
-    }
-    return false;
-  }*/
+  @Data
+  public static class ColorVersion {
+    PokeColor version;
+  }
+
+  @Data
+  public static class PokeColor {
+    String name;
+  }
 }
 
 
