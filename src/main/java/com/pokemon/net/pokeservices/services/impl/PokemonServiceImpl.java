@@ -45,20 +45,35 @@ public class PokemonServiceImpl implements PokemonService {
   @Override
   public PokemonConfig getAndSavePokemons() {
     PokemonConfig pokemonConfig = restTemplate.getForObject(uri, PokemonConfig.class);
+    LOGGER.info(String.format("GET pokemon base information for %d results", pokemonConfig.getCount()));
     String uriForNext = pokemonConfig.getNext();
-    while (uriForNext != null) {
-      PokemonConfig pokemonTemp = restTemplate.getForObject(uriForNext, PokemonConfig.class);
-      pokemonConfig.getResults().addAll(pokemonTemp.getResults());
-      uriForNext = pokemonTemp.getNext();
-    }
+    getNextPokemonPages(pokemonConfig, uriForNext);
+    getPokemonDataInfo(pokemonConfig);
+    pokemonBaseRepository.saveAll(pokemonMapper.map(pokemonConfig.getResults()));
+    return pokemonConfig;
+  }
+
+  private void getPokemonDataInfo(PokemonConfig pokemonConfig) {
+    int count = 0;
     for (PokemonBase poke : pokemonConfig.getResults()) {
+      LOGGER.info(String.format("GET data information for pokemon number %d", count));
       PokemonData pokeData = restTemplate.getForObject(poke.getUrl(), PokemonData.class);
 
       pokemonDataRepository.save(pokemonMapper.map(pokeData));
       poke.setId(pokeData.getId());
+      count++;
     }
-    pokemonBaseRepository.saveAll(pokemonMapper.map(pokemonConfig.getResults()));
-    return pokemonConfig;
+  }
+
+  private void getNextPokemonPages(PokemonConfig pokemonConfig, String uriForNext) {
+    int page = 0;
+    while (uriForNext != null) {
+      page++;
+      LOGGER.info(String.format("GET pokemon base information for page %d ", page));
+      PokemonConfig pokemonTemp = restTemplate.getForObject(uriForNext, PokemonConfig.class);
+      pokemonConfig.getResults().addAll(pokemonTemp.getResults());
+      uriForNext = pokemonTemp.getNext();
+    }
   }
 
   @Override
