@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -14,7 +15,7 @@ public class PokeController {
   @Autowired
   PokemonService pokemonService;
 
-  public final int LIMIT = 5;
+  public final String LIMIT = "5";
 
   @GetMapping("/start")
   public ResponseEntity<?> getPokemons() {
@@ -23,21 +24,21 @@ public class PokeController {
   }
 
   @GetMapping("/heaviest")
-  public ResponseEntity<?> getHeaviest() {
+  public ResponseEntity<?> getHeaviest(@RequestParam(name = "count", required = false, defaultValue = LIMIT) int count) {
 
-    return ResponseEntity.ok(pokemonService.getHeaviestPokemons(LIMIT));
+    return ResponseEntity.ok(pokemonService.getHeaviestPokemons(count));
   }
 
   @GetMapping("/highest")
-  public ResponseEntity<?> getHighest() {
+  public ResponseEntity<?> getHighest(@RequestParam(name = "count", required = false, defaultValue = LIMIT) int count) {
 
-    return ResponseEntity.ok(pokemonService.getHighestPokemons(LIMIT));
+    return ResponseEntity.ok(pokemonService.getHighestPokemons(count));
   }
 
   @GetMapping("/experience")
-  public ResponseEntity<?> getMoreBaseExperiencePokemons() {
+  public ResponseEntity<?> getMoreBaseExperiencePokemons(@RequestParam(name = "count", required = false, defaultValue = LIMIT) int count) {
 
-    return ResponseEntity.ok(pokemonService.getMoreBaseExperiencePokemons(LIMIT));
+    return ResponseEntity.ok(pokemonService.getMoreBaseExperiencePokemons(count));
   }
 
 }
