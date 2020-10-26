@@ -1,0 +1,23 @@
+version: '2'
+services:
+  poke-services:
+    build:
+      context: ./
+    ports:
+      - 8080:8080
+    links:
+      - h2
+
+  h2:
+    container_name: 'h2'
+    hostname: 'h2'
+    image: 1000kit/h2
+    ports:
+      - 8181:8181
+      - 1521:1521
+    volumes:
+      - h2-data:/opt/h2-data
+volumes:
+  h2-data:
+#END
+
